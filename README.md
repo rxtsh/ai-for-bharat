@@ -78,6 +78,18 @@ The system is designed to be scalable and ethically responsible.
 
 ---
 
-## Team
+## Files for Submission
+
+- [Google Drive](https://drive.google.com/drive/folders/1wHMXvDjozBJiineGWjuf1W6j9irY1_Pm?usp=drive_link)
+
+---
+
+## Team Members
+1) Ritesh Shukla
+[GitHub Profile](https://github.com/rxtsh)
+
+2) Raghav Sharma
+[GitHub Profile](https://github.com/revron23)
+
 
 Built for the AI for Bharat Hackathon.
