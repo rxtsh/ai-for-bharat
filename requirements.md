@@ -11,9 +11,9 @@ This document specifies requirements for an AI-powered transparency enhancement 
 ## Glossary
 
 - **System**: The Procurement Transparency AI platform (web application with backend API)
-- **Risk_Detector**: Python-based analysis engine using pandas, scikit-learn, and rule-based heuristics
+- **Risk_Detector**: Node.js-based analysis engine using statistical libraries and LLM API for pattern detection
 - **RTI_Generator**: Template engine producing RTI Act 2005 compliant documents in structured format
-- **Dashboard**: React-based web interface with data visualization using D3.js or Chart.js
+- **Dashboard**: Next.js-based web interface with data visualization using D3.js or Chart.js
 - **Citizen_User**: Non-technical end user with basic web browsing skills
 - **Procurement_Record**: Structured data containing tender_id, department, vendor, amount, dates, specifications
 - **Risk_Score**: Weighted numerical indicator (0-100) computed from multiple risk pattern detections
@@ -39,20 +39,20 @@ This document specifies requirements for an AI-powered transparency enhancement 
 - Styling: Tailwind CSS or Bootstrap for responsive layout
 
 **Backend**: RESTful API server
-- Framework: Flask (Python) or Express (Node.js)
+- Framework: Express.js (Node.js)
 - API Design: REST with JSON payloads, JWT authentication
 - Endpoints: /api/procurement, /api/auth, /api/upload, /api/rti
 
-**Risk Detection Engine**: Python-based analysis module
-- Statistical Analysis: pandas, numpy, scipy for data processing and outlier detection
-- NLP: spaCy or NLTK for specification text analysis
+**Risk Detection Engine**: Node.js-based analysis module
+- Statistical Analysis: Math.js, simple-statistics for data processing and outlier detection
+- NLP: LLM API (OpenAI GPT-4 or Anthropic Claude) for specification text analysis
 - Pattern Detection: Rule-based heuristics with configurable thresholds
-- Explainability: Template-based natural language generation
+- Explainability: Template-based natural language generation using LLM
 
-**Database**: PostgreSQL for structured data storage
-- Tables: procurement_records, users, risk_flags, explainability_reports, audit_logs
+**Database**: MongoDB for flexible document storage
+- Collections: procurement_records, users, risk_flags, explainability_reports, audit_logs
 - Indexes: (department_id, award_date), (vendor_id, award_date), (risk_score)
-- Constraints: Foreign keys, unique constraints on (tender_id, department_id)
+- Constraints: Unique compound indexes on (tender_id, department_id)
 
 **Caching Layer**: Redis (optional for production)
 - Cache dashboard queries with 5-minute TTL
@@ -69,7 +69,7 @@ This document specifies requirements for an AI-powered transparency enhancement 
 ### Deployment Architecture (Hackathon MVP)
 
 - **Hosting**: Single server deployment (Heroku, Vercel, or AWS EC2 t2.micro)
-- **Database**: PostgreSQL (Heroku Postgres or AWS RDS free tier)
+- **Database**: MongoDB Atlas (free tier M0 cluster with 512MB storage)
 - **Storage**: Local filesystem for uploaded CSVs (production would use S3)
 - **CI/CD**: GitHub Actions for automated testing and deployment
 
@@ -194,7 +194,7 @@ This document specifies requirements for an AI-powered transparency enhancement 
 
 **User Story:** As a system administrator, I want to ingest procurement data from multiple government sources, so that the system has comprehensive coverage.
 
-**Implementation Context**: Build ETL pipeline using Python scripts. For hackathon MVP, support CSV upload with schema validation. Production would add API connectors for GEM portal and state e-procurement systems.
+**Implementation Context**: Build ETL pipeline using Node.js scripts. For hackathon MVP, support CSV upload with schema validation. Production would add API connectors for GEM portal and state e-procurement systems.
 
 #### Acceptance Criteria
 
@@ -209,7 +209,7 @@ This document specifies requirements for an AI-powered transparency enhancement 
 
 **User Story:** As a citizen user, I want to create an account and save my monitoring preferences, so that I can track specific departments or risk patterns over time.
 
-**Implementation Context**: Implement JWT-based authentication with bcrypt password hashing. Use PostgreSQL for user data storage. For hackathon MVP, basic email/password auth is sufficient; production would add OAuth.
+**Implementation Context**: Implement JWT-based authentication with bcrypt password hashing. Use MongoDB for user data storage. For hackathon MVP, basic email/password auth is sufficient; production would add OAuth.
 
 #### Acceptance Criteria
 
@@ -224,13 +224,13 @@ This document specifies requirements for an AI-powered transparency enhancement 
 
 **User Story:** As a system administrator, I want the system to handle national-scale data volumes, so that it can serve users across India.
 
-**Implementation Context**: Use PostgreSQL with proper indexing, Redis for caching, and horizontal scaling via containerization (Docker + Kubernetes for production). For hackathon, demonstrate performance with 10K record dataset.
+**Implementation Context**: Use MongoDB with proper indexing, Redis for caching, and horizontal scaling via containerization (Docker + Kubernetes for production). For hackathon, demonstrate performance with 10K record dataset.
 
 #### Acceptance Criteria
 
 1. THE System SHALL process CSV uploads of 10,000 procurement records within 600 seconds (average 60ms per record) using batch insert operations with chunk_size = 1000
 2. WHEN Dashboard API endpoint GET /api/procurement receives 100 concurrent requests, THE System SHALL maintain p95 response_time < 3000ms using database connection pooling (pool_size = 20) and query result caching (TTL = 300 seconds)
-3. THE System SHALL implement horizontal scaling architecture: stateless API servers behind load balancer, shared PostgreSQL database with read replicas, Redis cache cluster
+3. THE System SHALL implement horizontal scaling architecture: stateless API servers behind load balancer, shared MongoDB database with replica sets, Redis cache cluster
 4. WHEN Risk_Detector analyzes single procurement_record, THE System SHALL complete all pattern checks (5 risk patterns) within 5000ms using parallel execution where possible
 5. THE System SHALL achieve 99.5% uptime during business hours (09:00-18:00 IST) measured as: (total_minutes - downtime_minutes) / total_minutes >= 0.995 over 30-day rolling window
 
@@ -238,7 +238,7 @@ This document specifies requirements for an AI-powered transparency enhancement 
 
 **User Story:** As a citizen user, I want my personal information and monitoring activities to be protected, so that I can use the system safely.
 
-**Implementation Context**: Implement security best practices using industry-standard libraries. Use SQLAlchemy with parameterized queries to prevent SQL injection, helmet.js for HTTP headers, and rate limiting via Flask-Limiter or Express rate-limit.
+**Implementation Context**: Implement security best practices using industry-standard libraries. Use Mongoose with built-in sanitization to prevent NoSQL injection, helmet.js for HTTP headers, and rate limiting via express-rate-limit.
 
 #### Acceptance Criteria
 
@@ -282,7 +282,7 @@ This document specifies requirements for an AI-powered transparency enhancement 
 
 **User Story:** As a citizen user, I want to use the system in my preferred Indian language, so that language is not a barrier to transparency.
 
-**Implementation Context**: Use i18n library (react-i18next for frontend, Flask-Babel for backend). Store translations in JSON files. For hackathon MVP, support English + Hindi; production would add more languages.
+**Implementation Context**: Use i18n library (next-i18next for frontend, i18next for backend). Store translations in JSON files. For hackathon MVP, support English + Hindi; production would add more languages.
 
 #### Acceptance Criteria
 
@@ -307,7 +307,7 @@ This document specifies requirements for an AI-powered transparency enhancement 
 
 1. **Legal Compliance**: System must comply with Right to Information Act 2005, IT Act 2000, and data protection regulations; cannot make legal determinations or accusations
 2. **Hackathon Timeline**: MVP development constrained to 24-48 hours; must prioritize core risk detection and dashboard over advanced features
-3. **Budget Limitations**: Must use open-source technologies (Python, PostgreSQL, React) and free-tier cloud services (Heroku, Vercel, or AWS Free Tier); no paid APIs or commercial software
+3. **Budget Limitations**: Must use open-source technologies (Node.js, MongoDB, Next.js) and free-tier cloud services (Heroku, Vercel, MongoDB Atlas, or AWS Free Tier); LLM API costs should be minimized through prompt optimization
 4. **AI Explainability**: All risk detection algorithms must be interpretable and auditable; no black-box deep learning models without clear feature attribution
 5. **Ethical Boundaries**: System cannot enable direct accusations, public shaming, or harassment; must maintain neutral, investigative framing
 6. **Data Availability**: Limited to publicly available procurement data; cannot access confidential government databases or internal communications

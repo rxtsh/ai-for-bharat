@@ -26,7 +26,7 @@ This document specifies the technical architecture for an AI-powered public proc
 ┌─────────────────────────────────────────────────────────────────┐
 │                      Application Layer                           │
 │  ┌──────────────────────────────────────────────────────────┐  │
-│  │              API Gateway (Express/Flask)                  │  │
+│  │              API Gateway (Express.js)                     │  │
 │  │  ┌────────────┐ ┌────────────┐ ┌────────────┐           │  │
 │  │  │   Auth     │ │  Dashboard │ │    RTI     │           │  │
 │  │  │  Service   │ │   Service  │ │  Generator │           │  │
@@ -1491,8 +1491,8 @@ if (process.env.NODE_ENV === 'production') {
 │  └─────────────────────────────────┘   │
 │                                         │
 │  ┌─────────────────────────────────┐   │
-│  │  Backend API (Express/Flask)    │   │
-│  │  Port: 3000 / 5000              │   │
+│  │  Backend API (Express.js)       │   │
+│  │  Port: 3000                     │   │
 │  └─────────────────────────────────┘   │
 │                                         │
 │  ┌─────────────────────────────────┐   │
